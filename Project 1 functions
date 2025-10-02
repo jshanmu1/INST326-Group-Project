@@ -2,6 +2,7 @@ Pranavs Functions:
 load_movie_reviews()
 remove_duplicate_data()
 remove_spoiler_reviews()
+recommend_similar_movies()
 
 Jayraj's Functions:
 clean_reviews()
