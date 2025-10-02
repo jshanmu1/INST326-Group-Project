@@ -2,3 +2,9 @@ Pranavs Functions:
 load_movie_reviews()
 remove_duplicate_data()
 remove_spoiler_reviews()
+
+Jayraj's Functions:
+clean_reviews()
+summarize_plot()
+average_rating()
+is_positive()
