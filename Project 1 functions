@@ -11,10 +11,10 @@ average_rating()
 is_positive()
 
 Emilio's Functions:
-top_rated_movies()
 plot_top_movies()
-review_analysis()
 plot_genre_popularity()
+plot_rating_distribution()
+plot_review_activity_over_time()
 
 Jayden's functions:
 load_db_api_key()
