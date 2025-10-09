@@ -9,3 +9,9 @@ clean_reviews()
 summarize_plot()
 average_rating()
 is_positive()
+
+Emilio's Functions:
+top_rated_movies()
+plot_top_movies()
+review_analysis()
+plot_genre_popularity()
