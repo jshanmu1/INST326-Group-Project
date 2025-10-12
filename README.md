@@ -17,6 +17,7 @@ produces visual reports and visualizations (top-rated movies, genre popularity, 
   
 ## 3. Domain focus & problem statement
 Domain: Research Data Management & Information Science (movie metadata & reviews)
+
 Problem: Movie review data sets can sometimes be really large and hard to work with when it's messy. There could be duplicated, missing information, or confusing
 data, hard to interpret and show visually. This project aims to make a reproducible pipeline to clean the data, make good statistics, and be able to visualize clear
 results for certain questions, so analysts who work with movie data may use it to find useful information regarding movies.
