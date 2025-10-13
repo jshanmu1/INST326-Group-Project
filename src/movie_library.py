@@ -1,3 +1,5 @@
+# (All commits are found on our Colab document)
+
 import csv
 
 def load_db(path):
@@ -159,3 +161,447 @@ def export_reviews_to_csv(reviews, filename):
                 writer.writerow([row[0], row[1], row[2]])
 
 ###################################################################
+
+# Emilio Sanchez San Martin Functions
+
+# plot_top_movies()
+# I will need to use pandas library in order to create the functions fo visualization
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_top_movies(df, top_n=10):
+  """
+  Plotting the first top movies (how ever much you'd like to see) based on average ratings
+
+  Args:
+    df (pandas.DataFrame): The DataFrame containing movie data.
+    top_movies (int): The number of top movies to plot.
+
+  Returns:
+    None: Show's a bar chat of the rop rated movies
+
+  Raises:
+    ValueError: if the data is showing NA's or missing values
+
+  Example:
+    plot_top_movies(df, top_n=)
+
+  """
+  if df.empty:
+    raise ValueError("DataFrame is empty. No data to plot.")
+  if not {'title', 'vote_average'}.issubset(df.columns):
+    raise ValueError("DataFrame must have 'title' and 'average_rating' columns.")
+
+  top_movies = df.sort_values(by='vote_average', ascending=False).head(top_n)
+    plt.figure(figsize=(10, 6))
+    plt.barh(top_movies['title'], top_movies['vote_average'], color='skyblue')
+    plt.gca().invert_yaxis()
+    plt.title(f"Top {top_n} Movies by Average Rating")
+    plt.xlabel("Average Rating (vote_average)")
+    plt.ylabel("Movie Title")
+    plt.show() # Had to use Gemini AI to understand how to work with Matplot.lib (plt) to make visualizations
+
+     
+
+# Emilio Sanchez San Martin Functions
+
+# plot_genre_popularity()
+import seaborn as sns
+
+def plot_genre_popularity(df):
+  """
+  Plotting average rating per genre to find which genres do best!
+
+  Args:
+    df (pd.DataFrame): The DataFrame containing variables 'genres' and 'vote_average'.
+
+  Returns:
+    None: Show's a bar chat of average rating by genre
+
+  Example:
+    plot_genre_popularity(df)
+
+  """
+  if 'genres' not in df.columns or 'vote_average' not in df.columns:
+    raise ValueError("DataFrame must have 'genres' and 'vote_average' columns.")
+
+  # Splitting genres (since there are multiple per movie)
+  genre_split = df.assign(genres=df['genres'].str.split(', ')).explode('genres')
+
+  genre_stats = (
+      genre_split.groupby('genres')['vote_average']
+      .mean()
+      .sort_values(ascending=False)
+      .reset_index()
+  )
+
+  plt.figure(figsize=(12, 6))
+  sns.barplot(data=genre_stats, x='genres', y='vote_average', palette='coolwarm')
+  plt.xticks(rotation=45, ha='right')
+  plt.title("Average Rating by Genre")
+  plt.xlabel("Genre")
+  plt.ylabel("Average Rating")
+  plt.show()
+
+     
+
+# Emilio Sanchez San Martin Functions
+
+def plot_rating_distribution(df):
+  """
+  Histogram showing the distribution of movie ratings.
+
+  Args:
+     df (pd.DataFrame): Dataset with the 'vote_average' column.
+
+  Returns:
+      None: Displays a histogram.
+
+  Example:
+  plot_rating_distribution(df)
+  """
+  if 'vote_average' not in df.columns:
+    raise ValueError("DataFrame must have 'vote_average' column.")
+
+  plt.figure(figsize=(8, 5))
+  plt.hist(df['vote_average'], bins=20, color='lightgreen', edgecolor='black')
+  plt.title("Distribution of Movie Ratings")
+  plt.xlabel("Rating (vote_average)")
+  plt.ylabel("Number of Movies")
+  plt.grid(alpha=0.3)
+  plt.show()
+     
+
+# Emilio Sanchez San Martin Functions
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def plot_review_activity_over_time (df, genres=None):
+
+  """
+  Plotting the # of movies realeased per year, which allows you to
+  filter by specific genres
+
+  This visualization helps analyze which genres had the most movie
+  releases over time and how production trends evolved between 2010 and 2025.
+
+  Args:
+    df (pd.DataFrame): TMDB movie dataset containing 'release_date' and 'genres' columns.
+    genres (list[str], optional): A list of genre names to filter by. (If None, includes all genres).
+
+  Returns:
+    None: A line chart comparing movie release trends per genre.
+
+  Raises:
+    ValueError: If required columns ('release_date', 'genres') are missing.
+
+  Example:
+    plot_review_activity_over_time(df)
+    plot_review_activity_over_time(df, genres=['Action', 'Comedy', 'Drama'])
+
+  """
+  # Validating columns
+  required_cols = {'release_date', 'genres'}
+  if not required_cols.issubset(df.columns):
+      raise ValueError(f"Missing required columns: {required_cols - set(df.columns)}")
+
+  # Parse release dates
+  df['release_date'] = pd.to_datetime(df['release_date'], errors='coerce')
+  df['year'] = df['release_date'].dt.year
+
+  # Expand genres (some rows have multiple genres separated by commas)
+  genre_expanded = df.assign(genres=df['genres'].str.split(', ')).explode('genres')
+
+  # Filter by specific genres if provided
+  if genres:
+      genre_expanded = genre_expanded[genre_expanded['genres'].isin(genres)]
+      title_suffix = f" for Selected Genres: {', '.join(genres)}"
+  else:
+      title_suffix = " (All Genres)"
+
+  # Count movies released per year per genre
+  yearly_genre_counts = (
+      genre_expanded.groupby(['year', 'genres'])
+      .size()
+      .reset_index(name='movie_count')
+  )
+
+  plt.figure(figsize=(12, 6))
+
+  # Plot each genre separately
+  for genre in yearly_genre_counts['genres'].unique():
+      genre_data = yearly_genre_counts[yearly_genre_counts['genres'] == genre]
+      plt.plot(genre_data['year'], genre_data['movie_count'], marker='o', label=genre)
+
+  plt.title(f"Movies Released Per Year {title_suffix}")
+  plt.xlabel("Year")
+  plt.ylabel("Number of Movies Released")
+  plt.legend(title="Genre", bbox_to_anchor=(1.05, 1), loc='upper left')
+  plt.grid(alpha=0.3)
+  plt.tight_layout()
+  plt.show()
+
+###################################################################
+
+#load_movie_reviews
+def load_movie_reviews(filepath):
+    """
+    Loads movie reviews from a CSV file.
+
+    Args:
+        filepath: The path to the CSV file.
+
+    Returns:
+        A list of rows from the CSV file, each row as a list [review, rating].
+    """
+    reviews = []
+    with open(filepath, 'r') as file:
+        for line in file:
+            reviews.append(line.strip().split(','))
+    return reviews
+
+#remove_duplicate_data
+def remove_duplicate_data(reviews):
+    """
+    Removes duplicate reviews from a list of reviews.
+
+    This function removes any duplicates within the data, making a new list
+    without any duplicate entries.
+
+    Args:
+        reviews (list): A list of reviews, where each review can be any data type.
+
+    Returns:
+        list: A new list with duplicate reviews removed.
+
+    Raises:
+        TypeError: If 'reviews' is not a list.
+    """
+    if not isinstance(reviews, list):
+        raise TypeError("Reviews must be a list.")
+
+    unique_reviews = []
+    for review in reviews:
+        if review not in unique_reviews:
+            unique_reviews.append(review)
+    return unique_reviews
+     
+
+#remove_spoiler_reviews()
+def remove_spoiler_reviews(reviews):
+    """
+    Removes movie reviews that contain spoilers from the list.
+
+    This function checks each review for the word spoiler
+    and removes any review that contains the word in it.
+
+    Args:
+        reviews (list): A list of reviews, where each review is a list.
+
+
+    Returns:
+        list: A new list of reviews with all spoiler reviews removed.
+
+    Raises:
+        TypeError: If 'reviews' is not a list.
+
+    Example:
+        reviews = [
+            ["Loved the movie!!", 5],
+            ["Spoiler! lebron dies", 3],
+            ["Amazing plot twist", 5]
+        ]
+        unspoiled_reviews = remove_spoiler_reviews(reviews)
+        print(unspoiled_reviews)
+        # Output: [['Loved the movie!!', 5], ['Amazing plot twist', 5]]
+    """
+    if not isinstance(reviews, list):
+        raise TypeError("Reviews must be a list.")
+
+    unspoiled_reviews = []
+    for review in reviews:
+        if "spoiler" not in review[0].lower():
+            unspoiled_reviews.append(review)
+    return unspoiled_reviews
+     
+
+#recommend_similar_movies()
+def recommend_similar_movies(reviews):
+    """
+    Recommends movies based on previous high ratings.
+
+    This function looks at the user's rated movies and recommends other movies
+    that have similar high ratings.
+
+    Args:
+        reviews (list): A list of reviews, where each review is a list
+
+    Returns:
+        list: A list of recommended movies with high ratings.
+
+    Raises:
+        TypeError: If 'reviews' is not a list.
+
+    Example:
+        reviews = [
+            ["Avengers", 5],
+            ["Space Jam", 4],
+            ["Scream", 2],
+            ["Grownups", 5]
+        ]
+        recommendations = recommend_similar_movies(reviews)
+        print(recommendations)
+        # Output: [['Avengers', 5], ['Space Jam', 4], ['Grown Ups', 5]]
+    """
+    if not isinstance(reviews, list):
+        raise TypeError("Reviews must be a list.")
+
+    recommended = []
+    for review in reviews:
+        if len(review) == 2:
+            title, rating = review
+            if isinstance(rating, (int, float)) and rating >= 4:
+                recommended.append(review)
+
+    return recommended
+
+###################################################################
+
+#clean reviews
+def clean_review(review):
+    """ cleans a list of movie reviews by removing missing data and duplicates, and reviews that are not specific
+
+This function iterates through the provided list of reviews and performs
+    two main cleaning operations:
+    1. Removes any review entries that are considered incomplete (e.g., None, "", 0, or empty lists/dicts).
+    2. Removes duplicate review strings, keeping the first occurrence.
+
+Args:
+reviews_list(list): List of raw movie reviews / potential mixed data types
+
+Returns:
+list: A cleaned list of movie reviews.
+
+Raises:
+   TypeError: If the input 'reviews' is not a list.
+
+Example:
+movie_reviews = ["Great movie!", None, "So-so.", "Great movie!", ""]
+clean_review(movie_reviews)
+# Output: ['Great movie!', 'So-so.']
+"""
+    if not isinstance(review, list):
+        raise TypeError("Input must be a list.")
+
+    cleaned_reviews = []
+    seen_reviews = set()
+
+    for rev in review:
+
+        if rev in (None, "", 0, [], {}):
+            continue
+
+
+        if isinstance(rev, str) and rev not in seen_reviews:
+            cleaned_reviews.append(rev)
+            seen_reviews.add(rev)
+
+    return cleaned_reviews
+     
+
+#summarize_plot
+def summarize_plot(plot, max_length=100):
+    """Summarizes a movie plot to a specified maximum length.
+
+    This function takes a movie plot as input and truncates it to the specified
+    maximum length, appending an ellipsis ("...") if the plot exceeds that length.
+
+    Args:
+        plot (str): The original movie plot.
+        max_length (int): The maximum length of the summarized plot. Default is 100 characters.
+
+    Returns:
+        str: The summarized movie plot.
+
+    Raises:
+        TypeError: If 'plot' is not a string or 'max_length' is not an integer.
+        ValueError: If 'max_length' is less than or equal to 0.
+
+    Example:
+        original_plot = "In a world where technology has advanced beyond imagination, a young hero rises to challenge the status quo and bring balance to society."
+        summarized_plot = summarize_plot(original_plot, max_length=50)
+        print(summarized_plot)
+        # Output: "In a world where technology has advanced beyo..."
+    """
+    if not isinstance(plot, str):
+        raise TypeError("Plot must be a string.")
+    if not isinstance(max_length, int):
+        raise TypeError("Max length must be an integer.")
+    if max_length <= 0:
+        raise ValueError("Max length must be greater than 0.")
+
+    if len(plot) > max_length:
+        return plot[:max_length - 3] + "..."
+    return plot
+     
+
+#average_rating
+def average_rating(ratings):
+    """Calculates the average rating from a list of ratings.
+
+    This function takes a list of numerical ratings and computes the average.
+    It ignores any non-numeric values in the list.
+
+    Args:
+        ratings (list): A list of numerical ratings (int or float).
+
+    Returns:
+        float: The average rating, or 0 if there are no valid ratings.
+
+    Raises:
+        TypeError: If 'ratings' is not a list.
+
+    Example:
+        movie_ratings = [4.5, 3.0, 5.0, None, "bad", 4.0]
+        avg_rating = average_rating(movie_ratings)
+        print(avg_rating)
+        # Output: 4.125
+    """
+    if not isinstance(ratings, list):
+        raise TypeError("Input must be a list.")
+
+    total = 0
+    count = 0
+
+    for rating in ratings:
+        if isinstance(rating, (int, float)):
+            total += rating
+            count += 1
+
+    return total / count if count > 0 else 0
+     
+
+#is_positive
+def is_positive(review):
+    """Determines if a movie review is positive based on the presence of positive keywords.
+
+    This function checks if the review contains any of the predefined positive keywords.
+    If any positive keyword is found, the review is considered positive.
+
+    Args:
+        review (str): The movie review text.
+        """
+    positive_keywords = {"good", "great", "excellent", "amazing", "fantastic", "love", "wonderful", "best", "awesome", "positive"}
+
+    if not isinstance(review, str):
+        raise TypeError("Review must be a string.")
+
+    review_lower = review.lower()
+
+    for keyword in positive_keywords:
+        if keyword in review_lower:
+            return True
+    return False
+
+# (All commits are found on our Colab document)
