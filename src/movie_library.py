@@ -344,7 +344,7 @@ def plot_review_activity_over_time (df, genres=None):
 
 ###################################################################
 
-#load_movie_reviews
+#load_movie_reviews- Pranav Rishi
 def load_movie_reviews(filepath):
     """
     Loads movie reviews from a CSV file.
@@ -361,7 +361,7 @@ def load_movie_reviews(filepath):
             reviews.append(line.strip().split(','))
     return reviews
 
-#remove_duplicate_data
+#remove_duplicate_data- Pranav Rishi
 def remove_duplicate_data(reviews):
     """
     Removes duplicate reviews from a list of reviews.
@@ -388,7 +388,7 @@ def remove_duplicate_data(reviews):
     return unique_reviews
      
 
-#remove_spoiler_reviews()
+#remove_spoiler_reviews()- Pranav Rishi
 def remove_spoiler_reviews(reviews):
     """
     Removes movie reviews that contain spoilers from the list.
@@ -426,7 +426,7 @@ def remove_spoiler_reviews(reviews):
     return unspoiled_reviews
      
 
-#recommend_similar_movies()
+#recommend_similar_movies()-Pranav Rishi
 def recommend_similar_movies(reviews):
     """
     Recommends movies based on previous high ratings.
