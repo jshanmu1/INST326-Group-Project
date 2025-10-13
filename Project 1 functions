@@ -17,7 +17,7 @@ plot_rating_distribution()
 plot_review_activity_over_time()
 
 Jayden's functions:
-load_db_api_key()
+load_db()
 fetch_tmdb_movie_reviews()
 normalize_tmdb_reviews()
 export_reviews_to_csv()
