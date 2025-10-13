@@ -137,5 +137,15 @@ def export_reviews_to_csv(reviews, filename):
 
     Returns:
         None
+        
+    Raises:
+        TypeError: If inputs are wrong types.
+        ValueError: If reviews is empty.
     """
+    if not isinstance(reviews, list):
+        raise TypeError("reviews must be in a list")
+    if not isinstance(filename, str):
+        raise TypeError("filename must be a string")
+    if len(reviews) == 0:
+        raise ValueError("no reviews to export")
 
