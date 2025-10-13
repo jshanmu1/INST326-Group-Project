@@ -467,7 +467,7 @@ def recommend_similar_movies(reviews):
     return recommended
 
 ###################################################################
-
+# Jayraj Function
 #clean reviews
 def clean_review(review):
     """ cleans a list of movie reviews by removing missing data and duplicates, and reviews that are not specific
@@ -509,7 +509,7 @@ clean_review(movie_reviews)
 
     return cleaned_reviews
      
-
+# Jayraj Function
 #summarize_plot
 def summarize_plot(plot, max_length=100):
     """Summarizes a movie plot to a specified maximum length.
@@ -545,7 +545,7 @@ def summarize_plot(plot, max_length=100):
         return plot[:max_length - 3] + "..."
     return plot
      
-
+#Jayraj Function
 #average_rating
 def average_rating(ratings):
     """Calculates the average rating from a list of ratings.
@@ -581,7 +581,7 @@ def average_rating(ratings):
 
     return total / count if count > 0 else 0
      
-
+#Jayraj Function
 #is_positive
 def is_positive(review):
     """Determines if a movie review is positive based on the presence of positive keywords.
