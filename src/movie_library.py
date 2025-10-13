@@ -1,4 +1,4 @@
-# (All commits are found on our Colab document)
+# (All commits are found on our Colab document) # As well as the tmdb_functions.py file
 
 import csv
 
