@@ -1,27 +1,50 @@
-import requests
 import csv
 
 def load_db_api_key(path):
     """
-    Read a TMDB API key from a text file.
+    Load and filter TMDB movies from a CSV file (Started with api keys in mind but we're filtering csv files to be more specific) 
 
-    Arguments: path is a string: Path to the text file that has the key.
+    Keeps only rows from years 2010 to 2025 with vote counter being >= 1
 
-    Returns: An API key.
+    Args: Path to the CSV file
 
-    Possible Errors:
-        TypeError: If path is not a string.
-        FileNotFoundError: If the file does not exist.
-        ValueError: If the file is empty.
+    Returns: A list of filtered rows as dictionaries
+
+    Raises:
+        TypeError: If path is not a string
+        FileNotFoundError: If the file does not exist
     """
-
     if not isinstance(path, str):
-        raise TypeError("path must be a string")
+        raise TypeError("path is a string")
 
+    rows = []
     with open(path, "r", encoding="utf-8") as f:
-        key = f.read().strip()
+        reader = csv.DictReader(f)
+        for row in reader:
+            year = None
+            if "release_year" in row and row["release_year"]:
+                try:
+                    year = int(row["release_year"])
+                except ValueError:
+                    year = None
+            if year is None and "release_date" in row and row["release_date"]:
+                d = row["release_date"]
+                if len(d) >= 4 and d[:4].isdigit():
+                    year = int(d[:4])
 
-    if key == "":
-        raise ValueError("APIkey file is empty")
+            try:
+                votes = int(row.get("vote_count", "0"))   #Vount Count Getter portion
+            except ValueError:
+                votes = 0
 
-    return key
+            if year is not None and 2010 <= year <= 2025 and votes >= 1:
+                rows.append(row)
+
+    return rows
+
+
+
+
+
+
+
