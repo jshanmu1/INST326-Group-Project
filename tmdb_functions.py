@@ -108,26 +108,19 @@ def normalize_tmdb_reviews(reviews):
     Raises:
         TypeError: If reviews is not a list.
     """
-    def normalize_tmdb_reviews(reviews):
-    """
-    Convert review dicts into a simple list format.
-
-    Input:  [{"author": "...", "content": "...", "author_details": {"rating": X}}, ...]
-    Output: [["TMDB users", "some text", X], ...]
-
-    Args:
-        reviews (list): List of review dicts.
-
-    Returns:
-        list: List of [author, content, rating].
-
-    Raises:
-        TypeError: If reviews is not a list.
-    """
     if not isinstance(reviews, list):
         raise TypeError("reviews must be a type of list")
 
     clean = []
-    
+    for item in reviews:
+        if not isinstance(item, dict):
+            continue
+        author = item.get("author", "TMDB users")
+        content = (item.get("content", "")).strip()
+        details = item.get("author_details", {})
+        rating = None
+        if isinstance(details, dict):
+            rating = details.get("rating", None)
+        clean.append([author, content, rating])
 
     return clean
