@@ -14,3 +14,14 @@ def load_db_api_key(path):
         FileNotFoundError: If the file does not exist.
         ValueError: If the file is empty.
     """
+
+    if not isinstance(path, str):
+        raise TypeError("path must be a string")
+
+    with open(path, "r", encoding="utf-8") as f:
+        key = f.read().strip()
+
+    if key == "":
+        raise ValueError("APIkey file is empty")
+
+    return key
