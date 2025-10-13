@@ -91,6 +91,21 @@ def fetch_tmdb_movie_reviews(title, movie_rows):
     return found
 
 
+#Third function 
+def normalize_tmdb_reviews(reviews):
+    """
+    Convert review dicts into list form
 
+    Input:  [{"author": , "content": , "author_details": {"rating": X}}]
+    Output: [["TMDB users", "some text", X],]
 
+    Args:
+        reviews: list of review dicts.
 
+    Returns:
+        List of [author, content, rating]
+
+    Raises:
+        TypeError: If reviews is not a list.
+    """
+    
