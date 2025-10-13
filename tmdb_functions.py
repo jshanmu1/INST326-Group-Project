@@ -124,3 +124,18 @@ def normalize_tmdb_reviews(reviews):
         clean.append([author, content, rating])
 
     return clean
+
+
+#Fourth function 
+def export_reviews_to_csv(reviews, filename):
+    """
+    Save reviews to a CSV file with columns.
+
+    Args:
+        reviews which is a list of [author, content, rating].
+        filename string: Output CSV path.
+
+    Returns:
+        None
+    """
+
