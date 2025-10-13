@@ -6,16 +6,18 @@ def load_db(path):
 
     Keeps only rows from years 2010 to 2025 with vote counter being >= 1,
 
-    Args: Path to the CSV file.
+    Args:
+        path (str): Path to the CSV file.
 
-    Returns: A list of filtered rows as dictionaries.
+    Returns:
+        list: Filtered rows as dictionaries.
 
     Raises:
         TypeError: If path is not a string.
         FileNotFoundError: If the file does not exist.
     """
     if not isinstance(path, str):
-        raise TypeError("path is a string")
+        raise TypeError("path must be a string")
 
     rows = []
     with open(path, "r", encoding="utf-8-sig") as f:
@@ -33,7 +35,7 @@ def load_db(path):
                     year = int(d[:4])
 
             try:
-                votes = int(row.get("vote_count", "0"))   #Vount Count Getter portion
+                votes = int(row.get("vote_count", "0"))   #Vount Count Getter 
             except ValueError:
                 votes = 0
 
@@ -50,8 +52,8 @@ def fetch_tmdb_movie_reviews(title, movie_rows):
     Uses the movie overview as the review text and vote_average as the rating.
 
     Args:
-        title string: Movie title to match. 
-        movie_rows list: Rows from load_db().
+        title (str): Movie title to match (case-insensitive).
+        movie_rows (list): Rows returned by load_db().
 
     Returns:
         List of dicts: {"author": "TMDB users", "content": <overview>, "author_details": {"rating": <float or None>}}
@@ -96,14 +98,14 @@ def normalize_tmdb_reviews(reviews):
     """
     Convert review dicts into list form
 
-    Input:  [{"author": , "content": , "author_details": {"rating": X}}]
-    Output: [["TMDB users", "some text", X],]
+    Input:  [{"author": "...", "content": "...", "author_details": {"rating": X}}, ...]
+    Output: [["TMDB users", "some text", X], ...]
 
     Args:
-        reviews: list of review dicts.
+        reviews (list): List of review dicts.
 
     Returns:
-        List of [author, content, rating]
+        list: [author, content, rating]
 
     Raises:
         TypeError: If reviews is not a list.
@@ -132,9 +134,9 @@ def export_reviews_to_csv(reviews, filename):
     Save reviews to a CSV file with columns.
 
     Args:
-        reviews which is a list of [author, content, rating].
-        filename string: Output CSV path.
-
+        reviews (list): [author, content, rating].
+        filename (str): Output CSV path.
+        
     Returns:
         None
         
