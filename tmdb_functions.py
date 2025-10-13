@@ -1,24 +1,24 @@
 import csv
 
-def load_db_api_key(path):
+def load_db(path):
     """
-    Load and filter TMDB movies from a CSV file (Started with api keys in mind but we're filtering csv files to be more specific) 
+    Load and filter TMDB movies from a CSV file (Started with api keys in mind but we're filtering csv files to be more specific).
 
-    Keeps only rows from years 2010 to 2025 with vote counter being >= 1
+    Keeps only rows from years 2010 to 2025 with vote counter being >= 1,
 
-    Args: Path to the CSV file
+    Args: Path to the CSV file.
 
-    Returns: A list of filtered rows as dictionaries
+    Returns: A list of filtered rows as dictionaries.
 
     Raises:
-        TypeError: If path is not a string
-        FileNotFoundError: If the file does not exist
+        TypeError: If path is not a string.
+        FileNotFoundError: If the file does not exist.
     """
     if not isinstance(path, str):
         raise TypeError("path is a string")
 
     rows = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             year = None
@@ -42,7 +42,53 @@ def load_db_api_key(path):
 
     return rows
 
+#Second function
+def fetch_tmdb_movie_reviews(title, movie_rows):
+    """
+    Create a reviews list from the CSV rows per the movie title.
 
+    Uses the movie overview as the review text and vote_average as the rating.
+
+    Args:
+        title string: Movie title to match. 
+        movie_rows list: Rows from load_db().
+
+    Returns:
+        List of dicts: {"author": "TMDB users", "content": <overview>, "author_details": {"rating": <float or None>}}
+
+    Raises:
+        TypeError: If the inputs are invalid types.
+    """
+    if not isinstance(title, str):
+        raise TypeError("title must be a string")
+    if not isinstance(movie_rows, list):
+        raise TypeError("movie_rows must be a list")
+
+    found = []
+    q = title.strip().lower()
+
+    for row in movie_rows:
+        row_title = (row.get("title") or row.get("original_title") or "").strip()
+        if not row_title:
+            continue
+        name = row_title.lower()
+
+        if name == q or q in name:
+            overview = (row.get("overview") or "").strip()
+            rating = None
+            va = row.get("vote_average")
+            if va not in (None, ""):
+                try:
+                    rating = float(va)
+                except ValueError:
+                    rating = None
+            found.append({
+                "author": "TMDB users",
+                "content": overview,
+                "author_details": {"rating": rating}
+            })
+
+    return found
 
 
 
