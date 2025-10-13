@@ -149,3 +149,10 @@ def export_reviews_to_csv(reviews, filename):
     if len(reviews) == 0:
         raise ValueError("no reviews to export")
 
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Author", "Content", "Rating"])
+        for row in reviews:
+            if isinstance(row, (list, tuple)) and len(row) >= 3:
+                writer.writerow([row[0], row[1], row[2]])
+
