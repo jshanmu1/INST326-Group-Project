@@ -12,8 +12,7 @@ import seaborn as sns
 class MovieVisualizer:
     """
     Represents a visualization system for movie datasets (2010–2025).
-
-    This class handles different types of charts of movie data with csv files to analyze movie popularity, ratings, and release trends.
+    Class handles different types of charts of movie data with csv files to analyze movie popularity, ratings, and release trends.
 
     Methods:
         - plot_top_movies(): shows top-rated movies
@@ -24,13 +23,10 @@ class MovieVisualizer:
 
     def __init__(self, df: pd.DataFrame):
         """
-        Initialize the MovieVisualizer with a dataset.
+        Making a class MovieVisualizer to work with a dataset.
 
-        Args:
-            df (pd.DataFrame): The DataFrame containing movie data.
-
-        Raises:
-            ValueError: If the DataFrame is empty or missing key columns.
+        Args: df (pd.DataFrame): The DataFrame containing movie data.
+        Raises: ValueError: If the DataFrame is empty or missing key columns.
         """
         if not isinstance(df, pd.DataFrame):
             raise TypeError("df must be a pandas DataFrame.")
