@@ -1,3 +1,139 @@
+# Jayraj Class updated to reflect composition
+#clean reviews
+# I updated the class name to ReviewCleaner to reflect composition 
+class ReviewCleaner:
+     """ cleans a list of movie reviews by removing missing data and duplicates, and reviews that are not specific
+
+This function iterates through the provided list of reviews and performs
+    two main cleaning operations:
+    1. Removes any review entries that are considered incomplete (e.g., None, "", 0, or empty lists/dicts).
+    2. Removes duplicate review strings, keeping the first occurrence.
+
+Args:
+reviews_list(list): List of raw movie reviews / potential mixed data types
+
+Returns:
+list: A cleaned list of movie reviews.
+
+Raises:
+   TypeError: If the input 'reviews' is not a list.
+
+Example:
+movie_reviews = ["Great movie!", None, "So-so.", "Great movie!", ""]
+clean_review(movie_reviews)
+# Output: ['Great movie!', 'So-so.']
+"""
+def clean_review(review):
+    if not isinstance(review, list):
+        raise TypeError("Input must be a list.")
+
+    cleaned_reviews = []
+    seen_reviews = set()
+
+    for rev in review:
+
+        if rev in (None, "", 0, [], {}):
+            continue
+
+
+        if isinstance(rev, str) and rev not in seen_reviews:
+            cleaned_reviews.append(rev)
+            seen_reviews.add(rev)
+
+    return cleaned_reviews
+     
+#summarize_plot
+# Jayraj Class PlotSummarizer updated to reflect composition
+class PlotSummarizer:
+    
+    """Summarizes a movie plot to a specified maximum length.
+
+    This function takes a movie plot as input and truncates it to the specified
+    maximum length, appending an ellipsis ("...") if the plot exceeds that length.
+
+    Args:
+        plot (str): The original movie plot.
+        max_length (int): The maximum length of the summarized plot. Default is 100 characters.
+
+    Returns:
+        str: The summarized movie plot.
+
+    Raises:
+        TypeError: If 'plot' is not a string or 'max_length' is not an integer.
+        ValueError: If 'max_length' is less than or equal to 0.
+
+    Example:
+        original_plot = "In a world where technology has advanced beyond imagination, a young hero rises to challenge the status quo and bring balance to society."
+        summarized_plot = summarize_plot(original_plot, max_length=50)
+        print(summarized_plot)
+        # Output: "In a world where technology has advanced beyo..."
+    """
+    def summarize(self, plot, max_length=100):
+        if not isinstance(plot, str):
+            raise TypeError("Plot must be a string.")
+        if not isinstance(max_length, int):
+            raise TypeError("Max length must be an integer.")
+        if max_length <= 0:
+            raise ValueError("Max length must be greater than 0.")
+
+        return plot[:max_length - 3] + "..." if len(plot) > max_length else plot
+     
+#Jayraj Class RatingAnalyzer updated to reflect composition
+#average_rating
+class RatingAnalyzer:
+    """Calculates the average rating from a list of ratings.
+
+    This function takes a list of numerical ratings and computes the average.
+    It ignores any non-numeric values in the list.
+
+    Args:
+        ratings (list): A list of numerical ratings (int or float).
+
+    Returns:
+        float: The average rating, or 0 if there are no valid ratings.
+
+    Raises:
+        TypeError: If 'ratings' is not a list.
+
+    Example:
+        movie_ratings = [4.5, 3.0, 5.0, None, "bad", 4.0]
+        avg_rating = average_rating(movie_ratings)
+        print(avg_rating)
+        # Output: 4.125
+    """
+    def average(self, ratings):
+        if not isinstance(ratings, list):
+            raise TypeError("Input must be a list.")
+
+        total = count = 0
+
+        for rating in ratings:
+            if isinstance(rating, (int, float)):
+                total += rating
+                count += 1
+
+        return total / count if count > 0 else 0
+     
+#Jayraj Function
+#is_positive
+class PositiveReviewDetector:
+    """Determines if a movie review is positive based on the presence of positive keywords.
+
+    This function checks if the review contains any of the predefined positive keywords.
+    If any positive keyword is found, the review is considered positive.
+
+    Args:
+        review (str): The movie review text.
+        """
+    positive_keywords = {"good", "great", "excellent", "amazing", "fantastic", "love", "wonderful", "best", "awesome", "positive"}
+    def is_positive(self, review):
+        if not isinstance(review, str):
+            raise TypeError("Review must be a string.")
+
+        text = review.lower()
+        return any(word in text for word in self.POSITIVE_WORDS)
+
+# (All commits are found on our Colab document)
 
 # Jayraj's Class updated to reflect composition
 # DataClean Class
@@ -87,3 +223,5 @@ class DataClean:
 
     def __repr__(self):
         return f"DataClean(data={self._data!r})"
+
+
