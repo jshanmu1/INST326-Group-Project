@@ -7,7 +7,10 @@ class MovieReviewSystem(AbstractMovieReviewItem):
     Standard movie review processing system that loads reviews from a CSV,
     cleans them, and generates recommendations.
     """
-
+    
+    #These methods use external helper functions rather than
+    # inheriting from multiple classes. MovieReviewSystem "has-a" relationship
+    # with these utilities: it uses them to perform work.
     def __init__(self, filepath: str):
         if not isinstance(filepath, str) or not filepath.strip():
             raise ValueError("File path must be a non-empty string.")
@@ -37,18 +40,11 @@ class MovieReviewSystem(AbstractMovieReviewItem):
 
         return recommend_similar_movies(self._cleaned_reviews)
 
-    def summary(self):
-        """Provide a basic summary."""
-        return f"{len(self._cleaned_reviews)} cleaned reviews out of {len(self._reviews)} loaded."
+    
 
-    def __str__(self):
-        return f"MovieReviewSystem({len(self._cleaned_reviews)} cleaned reviews)"
-
-    def __repr__(self):
-        return f"MovieReviewSystem(filepath={self._filepath!r})"
-
-#Subclass
-
+# CriticMovieReviewSystem is a subclass of MovieReviewSystem which indicates inheritance as it does the same process but for critic reviews.
+# It overrides clean_reviews() and recommend_movies() 
+# It shows Polymorphism as the same method name called on base class reference behaves differently in subclass
 class CriticMovieReviewSystem(MovieReviewSystem):
     """
     Specialized system where reviews come from critics.
@@ -57,7 +53,7 @@ class CriticMovieReviewSystem(MovieReviewSystem):
     """
 
     def __init__(self, filepath, minimum_rating=7):
-        super().__init__(filepath)
+        super().__init__(filepath) # call parent method first
         self.minimum_rating = minimum_rating  
 
     def clean_reviews(self):
