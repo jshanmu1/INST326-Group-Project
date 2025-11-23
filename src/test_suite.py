@@ -2,7 +2,7 @@ import unittest
 from datetime import datetime
 from types import SimpleNamespace
 
-# Assuming all your classes are imported from their respective modules
+
 from your_module import (
     MovieReviewSystem, CriticMovieReviewSystem, DataClean,
     ReviewCleaner, PlotSummarizer, RatingAnalyzer, PositiveReviewDetector,
@@ -29,7 +29,7 @@ def mock_remove_spoiler_reviews(reviews):
 def mock_recommend_similar_movies(reviews):
     return [r[0] for r in reviews]
 
-# Patch MovieReviewSystem helpers
+
 MovieReviewSystem.load_movie_reviews = staticmethod(mock_load_movie_reviews)
 MovieReviewSystem.remove_duplicate_data = staticmethod(mock_remove_duplicate_data)
 MovieReviewSystem.remove_spoiler_reviews = staticmethod(mock_remove_spoiler_reviews)
