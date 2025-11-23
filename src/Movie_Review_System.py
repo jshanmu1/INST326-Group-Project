@@ -4,32 +4,11 @@ from BaseReviewSystem import AbstractMovieReviewItem
 
 class MovieReviewSystem(AbstractMovieReviewItem):
     """
-    Represents a movie review processing system.
-
-    This class loads reviews from a CSV file, cleans them using helper 
-    functions, and generates movie recommendations based on review ratings.
-
-    Demonstrates:
-    - Inheritance from AbstractMovieReviewItem
-    - Polymorphism through overridden methods
-    - Composition by delegating tasks to external helper functions
-
-    Example:
-        >>> system = MovieReviewSystem("reviews.csv")
-        >>> system.load_reviews()
-        >>> system.clean_reviews()
-        >>> system.recommend_movies()
+    Standard movie review processing system that loads reviews from a CSV,
+    cleans them, and generates recommendations.
     """
 
     def __init__(self, filepath: str):
-        """Initialize the MovieReviewSystem with a CSV filepath.
-
-        Args:
-            filepath (str): Path to the CSV file containing movie reviews.
-
-        Raises:
-            ValueError: If the filepath is empty or not a string.
-        """
         if not isinstance(filepath, str) or not filepath.strip():
             raise ValueError("File path must be a non-empty string.")
 
@@ -37,55 +16,83 @@ class MovieReviewSystem(AbstractMovieReviewItem):
         self._reviews = []
         self._cleaned_reviews = []
 
-
-    @property
-    def filepath(self):
-        return self._filepath
-
-    @property
-    def reviews(self):
-        return self._reviews
-
-    @property
-    def cleaned_reviews(self):
-        return self._cleaned_reviews
-
-
     def load_reviews(self):
-        """Loads reviews from the CSV file using composition."""
-        from movie_library import load_movie_reviews
-
+        """Load reviews using composition functions."""
         self._reviews = load_movie_reviews(self._filepath)
         return self._reviews
 
     def clean_reviews(self):
-        """Cleans reviews by removing duplicates and spoiler content."""
-        from movie_library import remove_duplicate_data, remove_spoiler_reviews
-
+        """Remove duplicates and spoiler reviews."""
         if not self._reviews:
-            raise RuntimeError("No reviews loaded. Call load_reviews() first.")
+            raise RuntimeError("No reviews loaded")
 
         no_duplicates = remove_duplicate_data(self._reviews)
         self._cleaned_reviews = remove_spoiler_reviews(no_duplicates)
         return self._cleaned_reviews
 
     def recommend_movies(self):
-        """Generates movie recommendations from cleaned reviews."""
-        from movie_library import recommend_similar_movies
-
+        """Recommend movies using the base logic."""
         if not self._cleaned_reviews:
-            raise RuntimeError("No cleaned reviews available.")
+            raise RuntimeError("No cleaned reviews available")
 
         return recommend_similar_movies(self._cleaned_reviews)
 
-
     def summary(self):
-        total = len(self._reviews)
-        cleaned = len(self._cleaned_reviews)
-        return f"Loaded {total} reviews, cleaned down to {cleaned}."
+        """Provide a basic summary."""
+        return f"{len(self._cleaned_reviews)} cleaned reviews out of {len(self._reviews)} loaded."
 
     def __str__(self):
         return f"MovieReviewSystem({len(self._cleaned_reviews)} cleaned reviews)"
 
     def __repr__(self):
         return f"MovieReviewSystem(filepath={self._filepath!r})"
+
+#Subclass
+
+class CriticMovieReviewSystem(MovieReviewSystem):
+    """
+    Specialized system where reviews come from critics.
+    Extends MovieReviewSystem but changes behavior to reflect stricter rules.
+
+    """
+
+    def __init__(self, filepath, minimum_rating=7):
+        super().__init__(filepath)
+        self.minimum_rating = minimum_rating  
+
+    def clean_reviews(self):
+        """Critics system removes spoilers using parent logic AND removes low-rating reviews."""
+        cleaned = super().clean_reviews()
+
+        high_quality_only = []
+        for review in cleaned:
+            try:
+                rating = float(review[1])
+                if rating >= self.minimum_rating:
+                    high_quality_only.append(review)
+            except (ValueError, IndexError):
+                continue 
+
+        self._cleaned_reviews = high_quality_only
+        return self._cleaned_reviews
+
+    def recommend_movies(self):
+        """
+        Critic recommendations: return movies sorted by rating (high → low),
+        not just all movies ≥ 4 stars.
+        """
+        if not self._cleaned_reviews:
+            raise RuntimeError("No cleaned reviews available")
+
+        sorted_reviews = sorted(
+            self._cleaned_reviews,
+            key=lambda r: float(r[1]),
+            reverse=True
+        )
+        return sorted_reviews
+
+    def __str__(self):
+        return f"CriticMovieReviewSystem({len(self._cleaned_reviews)} high-quality reviews)"
+
+    def __repr__(self):
+        return f"CriticMovieReviewSystem(filepath={self._filepath!r}, minimum_rating={self.minimum_rating})"
